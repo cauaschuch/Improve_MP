@@ -166,11 +166,11 @@ with open(f'{composto}.in', 'w') as file: #montar o .in do composto
     file.write(f'&CONTROL\n/\n&SYSTEM\nibrav = 0\nnat = {nat}\nntyp ={len(tipos_atomicos)}\n/\n&ELECTRONS\n/\n')
     file.write("CELL_PARAMETERS angstrom\n")
     for vetor in base:
-        file.write(f"   {vetor[0]:>10.6f}  {vetor[1]:>10.6f}  {vetor[2]:>10.6f}\n")
+        file.write(f"   {vetor[0]:>10.8f}  {vetor[1]:>10.8f}  {vetor[2]:>10.8f}\n")
     file.write(f'ATOMIC_SPECIES\n')
     for elemento in tipos_atomicos:
         file.write(f'     {elemento} {massa_atomica(elemento)} {elemento}_pseudo\n')
     file.write('ATOMIC_POSITIONS {crystal}\n')
     for vetor in vetores:
-        file.write(f' {vetor[0]} {vetor[1]:>10.6f}  {vetor[2]:>10.6f}  {vetor[3]:>10.6f}\n')
+        file.write(f' {vetor[0]} {vetor[1]:>10.8f}  {vetor[2]:>10.8}  {vetor[3]:>10.8f}\n')
     file.write('K_POINTS automatic')
