@@ -1,15 +1,39 @@
 from mp_api.client import MPRester
 import math
 import numpy as np
-import re
+
 
 key = "H2RaVIDWeAR6N1y8E9lh9XYqB8mwVog7"
-composto = 'Ag2PHO4'
-simetria = 'Trigonal'
+
+
+composto = input('digite seu material ')
+s = input('Se quiser, digite a simetria ')
+
 with MPRester(key) as mpr:
-    docs = mpr.materials.summary.search(formula=composto,crystal_system=simetria)
-    mpids = [doc.material_id for doc in docs]
-    structure = mpr.get_structure_by_material_id(mpids[0])
+    
+    def busca_material(composto,simetria):
+        sistemas = ['Triclinic', 'Monoclinic', 'Orthorhombic', 'Tetragonal', 'Trigonal', 'Hexagonal','Cubic']
+
+        if simetria in sistemas:
+            docs = mpr.materials.summary.search(formula=composto,crystal_system=simetria)
+            mpids = [doc.material_id for doc in docs]
+            mpids = mpids[0]
+            estrutura = mpr.get_structure_by_material_id(mpids)     
+            dados = mpr.materials.get_data_by_id(mpids)
+            internacional = dados.symmetry.number
+            
+        else:
+            docs = mpr.materials.summary.search(formula=composto)
+            mpids = [doc.material_id for doc in docs]
+            mpids = mpids[0]
+            print ('\n !!!  simetria não especificada  !!!  \n')   
+            estrutura = mpr.get_structure_by_material_id(mpids)     
+            dados = mpr.materials.get_data_by_id(mpids)
+            internacional = dados.symmetry.number
+        
+        return internacional, estrutura
+
+n,structure = busca_material(composto,s)
 
 #INICIO PARTE 2 DO TRABALHO (XU E GADELHA)
 with open('data_MP.txt', 'w') as file:
@@ -30,7 +54,7 @@ def extrair_parametros_rede(filename):
     parts = lines[3].split(':')
     alpha, beta, gamma = map(float, parts[1].split())
     #pegar numero de atomos
-    nat = int(lines[-1].split(' ')[1])+1
+    nat = int(lines[-1].split()[0])+1
     vetores = []
     for line in lines[8:]:
         line = line.split()
