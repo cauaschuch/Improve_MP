@@ -33,16 +33,18 @@ with MPRester(key) as mpr:
     def busca_chem(chem):
         docs =  mpr.materials.summary.search(chemsys=chem)
         mpids = [doc.material_id for doc in docs]
-        estrutura = []
+        compostos = []
         for mpid in mpids:
-            estrutura += mpr.get_structure_by_material_id(mpid)
+           # estrutura += f'\n\n{mpr.get_structure_by_material_id(mpid)}'
             dados = mpr.materials.get_data_by_id(mpid)
+            compostos += [dados.formula_pretty]
             estrut_nome = dados.symmetry.crystal_system      
             internacional = dados.symmetry.number
-            return estrutura, mpids, estrut_nome, internacional
-    
-e,m,nome,i = busca_chem('Li-Fe')
-print(e,m,nome,i)
+        return compostos, mpids, estrut_nome, internacional
+
+chem = input('A-B-C ')   
+c,m,nome,i = busca_chem(chem)
+print(c)
 '''
 n,e,nome = busca_material(composto,simetria)
 chem = input('A-B-C ')'''
