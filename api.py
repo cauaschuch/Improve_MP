@@ -12,7 +12,7 @@ chem = input('A-B-C ')
 
 with MPRester(key) as mpr:
     
-    def busca_material(composto,simetria):
+    def busca_material(composto,simetria,chem):
         sistemas = ['Triclinic', 'Monoclinic', 'Orthorhombic', 'Tetragonal', 'Trigonal', 'Hexagonal','Cubic']
         
         if composto == '':
@@ -37,7 +37,7 @@ with MPRester(key) as mpr:
 
         return internacional, estrutura, estrut_nome
 
-N_internacional,estrutura, estrut_nome = busca_material(composto,s)
+N_internacional,estrutura, estrut_nome = busca_material(composto,s,chem)
 
 with open('data_MP.txt', 'w') as file:
     file.write(str(estrutura))
