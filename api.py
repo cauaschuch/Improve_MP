@@ -8,19 +8,13 @@ key = "H2RaVIDWeAR6N1y8E9lh9XYqB8mwVog7"
 
 composto = input('digite seu material ')
 s = input('Se quiser, digite a simetria ')
-chem = input('A-B-C ')
 
 with MPRester(key) as mpr:
     
-    def busca_material(composto,simetria,chem):
+    def busca_material(composto,simetria = ''):
         sistemas = ['Triclinic', 'Monoclinic', 'Orthorhombic', 'Tetragonal', 'Trigonal', 'Hexagonal','Cubic']
         
-        if composto == '':
-            
-            docs = mpr.materials.summary.search(chemsys=chem)
-            mpids = [doc.material_id for doc in docs]            
-        
-        elif simetria in sistemas:
+        if simetria in sistemas:
             docs = mpr.materials.summary.search(formula=composto,crystal_system=simetria)
             mpids = [doc.material_id for doc in docs]
             mpids = mpids[0] 
@@ -37,7 +31,7 @@ with MPRester(key) as mpr:
 
         return internacional, estrutura, estrut_nome
 
-N_internacional,estrutura, estrut_nome = busca_material(composto,s,chem)
+N_internacional,estrutura, estrut_nome = busca_material(composto,s)
 
 with open('data_MP.txt', 'w') as file:
     file.write(str(estrutura))
