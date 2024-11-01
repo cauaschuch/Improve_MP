@@ -9,7 +9,7 @@ key = "H2RaVIDWeAR6N1y8E9lh9XYqB8mwVog7"
 
 with MPRester(key) as mpr:
     
-    def busca_material(composto,simetria):
+    def busca_material(composto,simetria = ''):
         sistemas = ['Triclinic', 'Monoclinic', 'Orthorhombic', 'Tetragonal', 'Trigonal', 'Hexagonal','Cubic']
         
 
@@ -28,23 +28,37 @@ with MPRester(key) as mpr:
         estrut_nome = dados.symmetry.crystal_system      
         internacional = dados.symmetry.number
 
-        return internacional, estrutura, estrut_nome
+        return  estrutura, estrut_nome, internacional
+
 
     def busca_chem(chem):
+        
+        '''Esta função retorna uma lista alguns dos possíveis compostos
+        existentes para os elementos citados no argumento "chem".
+            
+            **Args**: 
+                elementos (str): A-B-C-...
+            
+            **Returns:**
+                compostos (list): Fórmulas Químicas
+        '''
         docs =  mpr.materials.summary.search(chemsys=chem)
         mpids = [doc.material_id for doc in docs]
         compostos = []
         for mpid in mpids:
-           # estrutura += f'\n\n{mpr.get_structure_by_material_id(mpid)}'
+           
             dados = mpr.materials.get_data_by_id(mpid)
             compostos += [dados.formula_pretty]
-            estrut_nome = dados.symmetry.crystal_system      
-            internacional = dados.symmetry.number
-        return compostos, mpids, estrut_nome, internacional
+            
+        return compostos
 
-chem = input('A-B-C ')   
-c,m,nome,i = busca_chem(chem)
-print(c)
-'''
-n,e,nome = busca_material(composto,simetria)
-chem = input('A-B-C ')'''
+chem = 'Sr-Mg-Si'   
+compostos = busca_chem(chem)
+print(compostos)
+
+for composto in compostos:
+    estrutura,nome,internacional = busca_material(composto)
+    with open(f'{composto}_data.txt', 'w') as file:
+        file.write(str(estrutura))
+    #função do xu
+   
