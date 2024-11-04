@@ -33,35 +33,6 @@ with MPRester(key) as mpr:
 
 N_internacional,estrutura, estrut_nome = busca_material(composto,s)
 
-def qe_input(estrutura):
-    with open('data_MP.txt', 'w') as file:
-        file.write(str(estrutura))
-    a, b, c, alpha, beta, gamma, nat, tipos_atomicos, vetores, prefix = extrair_parametros_rede('data_MP.txt')
-    ar,cgr,sgr,cb,sa,ca = calculo_parametros_lattice(a, b, c, alpha, beta, gamma)
-    diag = np.identity(3)
-    stdbase = np.array([[1.0 / ar, -cgr / sgr / ar, cb * a], [0.0, b * sa, b * ca], [0.0, 0.0, c]],dtype=float,)
-    base = np.dot(stdbase, diag)
-
-    with open(f'{composto}.in', 'w') as file: 
-        file.write(f"&CONTROL\nprefix = '{prefix}'\n/\n&SYSTEM\nibrav = 0\nnat = {nat}\nntyp = {len(tipos_atomicos)}\n/\n&ELECTRONS\n/\n")
-        file.write("CELL_PARAMETERS angstrom\n")
-        for vetor in base:
-            v_1 = Decimal(vetor[0]).quantize(Decimal('0.00000000'))
-            v_2 = Decimal(vetor[1]).quantize(Decimal('0.00000000'))
-            v_3 = Decimal(vetor[2]).quantize(Decimal('0.00000000'))
-            file.write(f"   {v_1:>10.8f}  {v_2:>10.8f}  {v_3:>10.8f}\n")
-        file.write(f'ATOMIC_SPECIES\n')
-        for elemento in tipos_atomicos:
-            file.write(f'     {elemento} {massa_atomica(elemento)} {elemento}_pseudo\n')
-        file.write('ATOMIC_POSITIONS {crystal}\n')
-        for vetor in vetores:
-            v_1 = Decimal(vetor[1]).quantize(Decimal('0.00000000'))
-            v_2 = Decimal(vetor[2]).quantize(Decimal('0.00000000'))
-            v_3 = Decimal(vetor[3]).quantize(Decimal('0.00000000'))
-            file.write(f' {vetor[0]} {v_1:>10.8f}  {v_2:>10.8f}  {v_3:>10.8f}\n')
-        file.write('K_POINTS automatic')
-        print(f'Seu input {composto}.in está pronto.')
-
 def extrair_parametros_rede(filename):
     """
     Extrai parâmetros de rede e informações sobre o material desejado de um arquivo de texto
@@ -264,5 +235,34 @@ def massa_atomica(elemento):
     if elemento not in elemento_massa:
         raise ValueError("Não há esse elemento no nosso banco de dados.")
     return elemento_massa[elemento]
+def qe_input(estrutura):
+
+    with open('data_MP.txt', 'w') as file:
+        file.write(str(estrutura))
+    a, b, c, alpha, beta, gamma, nat, tipos_atomicos, vetores, prefix = extrair_parametros_rede('data_MP.txt')
+    ar,cgr,sgr,cb,sa,ca = calculo_parametros_lattice(a, b, c, alpha, beta, gamma)
+    diag = np.identity(3)
+    stdbase = np.array([[1.0 / ar, -cgr / sgr / ar, cb * a], [0.0, b * sa, b * ca], [0.0, 0.0, c]],dtype=float,)
+    base = np.dot(stdbase, diag)
+
+    with open(f'{composto}.in', 'w') as file: 
+        file.write(f"&CONTROL\nprefix = '{prefix}'\n/\n&SYSTEM\nibrav = 0\nnat = {nat}\nntyp = {len(tipos_atomicos)}\n/\n&ELECTRONS\n/\n")
+        file.write("CELL_PARAMETERS angstrom\n")
+        for vetor in base:
+            v_1 = Decimal(vetor[0]).quantize(Decimal('0.00000000'))
+            v_2 = Decimal(vetor[1]).quantize(Decimal('0.00000000'))
+            v_3 = Decimal(vetor[2]).quantize(Decimal('0.00000000'))
+            file.write(f"   {v_1:>10.8f}  {v_2:>10.8f}  {v_3:>10.8f}\n")
+        file.write(f'ATOMIC_SPECIES\n')
+        for elemento in tipos_atomicos:
+            file.write(f'     {elemento} {massa_atomica(elemento)} {elemento}_pseudo\n')
+        file.write('ATOMIC_POSITIONS {crystal}\n')
+        for vetor in vetores:
+            v_1 = Decimal(vetor[1]).quantize(Decimal('0.00000000'))
+            v_2 = Decimal(vetor[2]).quantize(Decimal('0.00000000'))
+            v_3 = Decimal(vetor[3]).quantize(Decimal('0.00000000'))
+            file.write(f' {vetor[0]} {v_1:>10.8f}  {v_2:>10.8f}  {v_3:>10.8f}\n')
+        file.write('K_POINTS automatic')
+    print(f'Seu input {composto}.in está pronto.')
 
 qe_input(estrutura)
