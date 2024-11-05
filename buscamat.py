@@ -48,7 +48,8 @@ with MPRester(key) as mpr:
         for mpid in mpids:
            
             dados = mpr.materials.get_data_by_id(mpid)
-            compostos += [dados.formula_pretty]
+            compostos += [[dados.formula_pretty, mpid]]
+            
             
         return compostos
 
@@ -56,9 +57,11 @@ chem = 'Sr-Mg-Si'
 compostos = busca_chem(chem)
 print(compostos)
 
+
+
 for composto in compostos:
-    estrutura,nome,internacional = busca_material(composto)
-    with open(f'{composto}_data.txt', 'w') as file:
+    estrutura,nome,internacional = busca_material(composto[0])
+    with open(f'{composto[0]}_data.txt', 'w') as file:
         file.write(str(estrutura))
     #função do xu
    
