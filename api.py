@@ -8,6 +8,7 @@ key = "H2RaVIDWeAR6N1y8E9lh9XYqB8mwVog7"
 
 composto = input('digite seu material ')
 s = input('Se quiser, digite a simetria ')
+chem = input('chem ')
 
 with MPRester(key) as mpr:
     
@@ -31,6 +32,40 @@ with MPRester(key) as mpr:
 
         return internacional, estrutura, estrut_nome
 
+
+
+    def busca_chem(chem):
+        
+        '''Esta função retorna uma lista alguns dos possíveis compostos
+        existentes para os elementos citados no argumento "chem".
+            
+            **Args**: 
+                elementos (str): A-B-C-...
+            
+            **Returns:**
+                compostos (list): Fórmulas Químicas
+        '''
+        docs =  mpr.materials.summary.search(chemsys=chem)
+        mpids = [doc.material_id for doc in docs]
+        compostos = []
+        for mpid in mpids:
+           
+            dados = mpr.materials.get_data_by_id(mpid)
+            compostos += [[dados.formula_pretty, mpid]]
+            
+            
+        return compostos
+
+  
+compostos = busca_chem(chem)
+
+
+for composto in compostos:
+    nome,estrutura,internacional = busca_material(composto[0])
+    with open(f'{composto[0]}_data.txt', 'w') as file:
+        file.write(str(estrutura))
+
+exit()
 N_internacional,estrutura, estrut_nome = busca_material(composto,s)
 
 def extrair_parametros_rede(filename):
